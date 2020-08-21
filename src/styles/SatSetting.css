@@ -1,0 +1,21 @@
+.sat-setting{
+    text-align: left;
+    padding: 10px;
+    border: 2px solid #ccc;
+}
+.setting-list{
+    margin-bottom: 8px;
+}
+
+.setting-label{
+    color: #777;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.two-item-col{
+    display: flex;
+}
+.set-right{
+    margin-left: 10px;
+}

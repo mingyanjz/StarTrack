@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 class Footer extends Component{
     render() {
         return <footer className="App-footer">
-            This is a footer.
+            (c)2020 StarLink Tracker. All Rights Reserved. Website Made by Ming Yan
         </footer>
     }
 }

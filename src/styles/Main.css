@@ -1,0 +1,16 @@
+.main{   
+    position: relative;
+    height: 780px;
+}
+.left-part{   
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    padding: 70px;
+    height: 160px;
+
+   
+}
+.right-part{
+    margin-left: 380px;
+}
