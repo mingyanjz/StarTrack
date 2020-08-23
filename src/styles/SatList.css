@@ -1,0 +1,30 @@
+.satellite-box{
+    /* position: relative; */
+    padding-top: 10px;
+    margin-top: 10px;
+    border: 2px solid #ccc;
+    height: 450px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.start-tracking-btn{
+    text-transform: none;
+    /* text-align: center; */
+    background-color: #2bb673;
+    font-size: 1em;
+    color: #fff;
+    padding: 10px 36px;
+}
+.sat-list{
+    overflow: scroll;
+    height: 375px;
+}
+.sat-checkbox{
+    padding-right: 10px;
+}
+.sat-log{
+    position: relative;
+    top: 3px;
+}
+
+

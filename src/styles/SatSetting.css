@@ -3,6 +3,7 @@
     padding: 10px;
     border: 2px solid #ccc;
 }
+
 .setting-list{
     margin-bottom: 8px;
 }
@@ -13,9 +14,26 @@
     margin-bottom: 10px;
 }
 
+.list-item label{
+    font-size: 1em;
+}
+
+.set-right{
+    margin-left: 16px;
+    font-size: 1em;
+}
+
 .two-item-col{
     display: flex;
 }
-.set-right{
-    margin-left: 10px;
+
+.search-satellites{
+    text-align: center;
+}
+.search-satellites-btn {
+    text-transform: none;
+    padding: 10px 42px;
+    background-color: #2bb673;
+    font-size: 1em;
+    color: #fff;
 }

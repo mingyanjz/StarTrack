@@ -1,0 +1,1 @@
+export const SAT_API_KEY = "J2X4UE-7T7LU4-JQGV5K-4IZX";
