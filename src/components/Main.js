@@ -10,7 +10,10 @@ class Main extends Component {
         super();
         this.state = {
             loading: false,
+            loadTracking: false,
             selected: [],
+            satPositions: [],
+            curTime: 0,
         }
     }
     updateSelected = (item, status) => {
@@ -25,7 +28,7 @@ class Main extends Component {
         this.setState({
             selected: list,
         });
-        console.log(list);
+        // console.log(list);
     }
     onShowSatellites = (setting) => {
         this.searchSatellites(setting);
@@ -46,21 +49,65 @@ class Main extends Component {
                 });
             })
             .catch(error => {
-                this.state = {
+                this.setState({
                     loading: false,
-                }
+                }); 
                 console.log('err in fetch satellite -> ', error);
             })
     }
     trackSatellites = (duration) => {
         const { observerLat, observerLon, observerAlt } = this.state.setting;
         const seconds = duration * 60;
-        const urls = this.state.selected.map(entry => {
+        this.setState({
+            loadTracking: true,
+        }); 
+        const responses = this.state.selected.map(entry => {
             const {satid} = entry;
             const url = `${TRACK_SATELLITE}/${satid}/${observerLat}/${observerLon}/${observerAlt}/${seconds}/&apiKey=${SAT_API_KEY}`;
             return Axios.get(url);
         })
-        console.log(urls);
+        
+        Axios.all(responses)
+            .then(Axios.spread((...args) => {
+                return args.map(item => item.data)
+            })).then(res => {
+                res.map(entry => {
+                    entry.trace = entry.positions.map(({satlatitude, satlongitude}) => [satlongitude, satlatitude])
+                });
+                this.setState({
+                    loadTracking: false,
+                    satPositions: res,
+                });
+                this.track();
+            })
+            .catch(error => {
+            this.setState({
+                loadTracking: false,
+            }); 
+            console.log('err in fetch satellite -> ', error);
+        })
+        
+    }
+    track = () => {
+        // console.log(this.state.satPositions);
+        const timestep = 6;
+        const startTime = 0;
+        this.setState({
+            curTime: 0,
+        });
+        let curTime = startTime ;
+        const totalTime = this.state.satPositions[0].positions.length;
+        
+        let timer = setInterval( () => {
+            if (curTime >= totalTime) {
+                return;
+            }  
+            this.setState({
+                curTime: curTime,
+            });
+            curTime += timestep;
+        }, 100)
+       
     }
     render() {
         return (
@@ -79,7 +126,10 @@ class Main extends Component {
                 </div>
                 <div className="right-part">
                     <WorldMap
-                        refMap={this.refMap}
+                        // refMap={this.refMap}
+                        loading={this.state.loadTracking}
+                        satPositions={this.state.satPositions}
+                        curTime={this.state.curTime}
                     />
                 </div>
             </div>
