@@ -1,15 +1,31 @@
 import React, { Component } from 'react'
 import SatSetting from './SatSetting'
 import SatList from './SatList'
-import { NEARBY_SATELLITE, STARLINK_CATEGORY } from '../constant/constant';
+import WorldMap from './WorldMap'
+import { NEARBY_SATELLITE, STARLINK_CATEGORY, TRACK_SATELLITE } from '../constant/constant';
 import {SAT_API_KEY} from '../private/key'
 import Axios from 'axios';
 class Main extends Component {
     constructor() {
         super();
         this.state = {
-            loading: false
+            loading: false,
+            selected: [],
         }
+    }
+    updateSelected = (item, status) => {
+        let {selected: list} = this.state;
+        const found = list.some(entry => entry.satid === item.satid);
+        if (status && !found) {
+            list = [...list, item];
+        }
+        if (!status && found) {
+            list = list.filter(entry => entry.satid !== item.satid);
+        }
+        this.setState({
+            selected: list,
+        });
+        console.log(list);
     }
     onShowSatellites = (setting) => {
         this.searchSatellites(setting);
@@ -26,6 +42,7 @@ class Main extends Component {
                 this.setState({
                     satInfo: res.data,
                     loading: false,
+                    setting: setting,
                 });
             })
             .catch(error => {
@@ -34,6 +51,16 @@ class Main extends Component {
                 }
                 console.log('err in fetch satellite -> ', error);
             })
+    }
+    trackSatellites = (duration) => {
+        const { observerLat, observerLon, observerAlt } = this.state.setting;
+        const seconds = duration * 60;
+        const urls = this.state.selected.map(entry => {
+            const {satid} = entry;
+            const url = `${TRACK_SATELLITE}/${satid}/${observerLat}/${observerLon}/${observerAlt}/${seconds}/&apiKey=${SAT_API_KEY}`;
+            return Axios.get(url);
+        })
+        console.log(urls);
     }
     render() {
         return (
@@ -45,10 +72,15 @@ class Main extends Component {
                     <SatList 
                         satInfo={this.state.satInfo}
                         loading={this.state.loading}
+                        selected={this.state.selected}
+                        updateSelected={this.updateSelected}
+                        trackSatellites={this.trackSatellites}
                     />
                 </div>
                 <div className="right-part">
-                    This is my right;
+                    <WorldMap
+                        refMap={this.refMap}
+                    />
                 </div>
             </div>
         )

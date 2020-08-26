@@ -1,19 +1,51 @@
 import React, { Component } from 'react'
 import { Button } from 'antd'
-import { List, message, Avatar, Checkbox, Spin } from 'antd';
+import { List, message, Avatar, Checkbox, Spin, InputNumber } from 'antd';
 import Satellite from "../assets/images/Satellite_a.svg"
+import SatelliteSelected from "../assets/images/Satellite_c.svg"
 class SatList extends Component {
+    constructor(){
+        super();
+        this.state = {
+            duration: 0,
+        }
+    }
+    onChangeDuration = value => {
+        this.setState({
+            duration: value,
+        })
+        console.log(value);
+    }
+    onChange = entry => {
+        let item = entry.target.dataInfo;
+        let status = entry.target.checked;
+        this.props.updateSelected(item, status);
+    }
+
     render() {
         const satList = this.props.satInfo ? this.props.satInfo.above : [];
-        console.log(this.props.satInfo);
+        // console.log(this.props.satInfo);
         return (
             <div className="satellite-box">
                 <Button
                     className="start-tracking-btn"
                     size="large"
+                    disabled={this.props.selected.length===0}
+                    onClick={() => this.props.trackSatellites(this.state.duration)}
                 >
                     Start tracking on map
                 </Button>
+                <div className="set-duration">
+                            <label>Track Duration (min): </label>
+                            <InputNumber
+                                placeholder="duration"
+                                max={90}  
+                                min={0}
+                                defaultValue={0}
+                                style={{margin: "0 2px"}}
+                                onChange={this.onChangeDuration}
+                            />
+                        </div>
                 <hr />
                 {
                     this.props.loading ?
@@ -41,7 +73,7 @@ class SatList extends Component {
                                             <Avatar
                                                 className="sat-log"
                                                 size={50}
-                                                src={Satellite}
+                                                src={this.props.selected.some(entry => entry.satid === item.satid) ? SatelliteSelected : Satellite}
                                             />
                                         }
                                         title={<p>{item.satname}</p>}
