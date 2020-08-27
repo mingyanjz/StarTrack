@@ -1,33 +1,54 @@
 import React, { Component } from 'react';
 import { ComposableMap, Geographies, Geography, Graticule, Marker, Line } from "react-simple-maps";
 import { GEO_URL } from "../constant/constant";
-import { Spin, Slider } from 'antd';
+import { Spin, Slider, Button } from 'antd';
 class WorldMap extends Component {
     constructor() {
         super();
         this.state = {
-           
+
         }
     }
-
+    onChangeCurTime = (value) => {
+        this.props.changeCurTime(Math.round( value * 60));
+    }
+    
     render() {
-        let duration = this.props.satPositions.length != 0 ? this.props.satPositions[0].positions.length/60 : 0;
+        let duration = this.props.satPositions.length !== 0 ? this.props.satPositions[0].positions.length : 0;
+        let durationInMin = duration / 60;
+        let curTimeInMin = this.props.curTime / 60;
+        let curTime = Math.min(this.props.curTime, duration - 1);
+        
         return (
             <div className="map-box">
-                {/* {this.props.satPositions.length!=0 ?
+                {this.props.satPositions.length !== 0 ?
                     <div className="map-slider">
-                        <label className="slider-label">Tracking duration (mins)</label>
+                        <p className="slider-label">Tracking duration (mins)</p>
+                        <div className="slider">
                         <Slider
+                            
                             marks={{
                                 0: '0',
-                                [duration]: duration,
+                                [durationInMin]: durationInMin,
                             }}
                             step={0.1}
                             min={0}
-                            max={duration}
-                            value={this.props.curTime ? this.props.curTime/60 : 0} />
+                            max={durationInMin}
+                            value={curTimeInMin }
+                            onChange={this.onChangeCurTime}
+                        />
+                        </div>
+                        <div className="pause">
+                        <Button 
+                            className="pause-btn"
+                            type="primary" 
+                            onClick={() => this.props.tracking ? this.props.pauseTracking() : this.props.continueTracking()}
+                        >
+                            {this.props.tracking ? "Pause" : (curTimeInMin !== durationInMin ? "Continue" : "Restart")}
+                        </Button>
+                        </div> 
                     </div> : <></>
-                } */}
+                }
 
 
                 <ComposableMap
@@ -61,9 +82,9 @@ class WorldMap extends Component {
                                 </text>
                             </Marker> : <></>
                     }
-                    {this.props.curTime ?
+                    {duration && curTime < duration && curTime >= 0 ?
                         this.props.satPositions.map(item =>
-                            <Marker key={item.info.satid} coordinates={item.trace[this.props.curTime]}>
+                            <Marker key={item.info.satid} coordinates={item.trace[curTime]}>
                                 <circle r={4} fill={item.color} />
                                 <text textAnchor="middle" fill="#F53" y={20}>
                                     {item.info.satname.match(/\d+/g).join('')}
@@ -72,11 +93,11 @@ class WorldMap extends Component {
                         ) : <></>
 
                     }
-                    {this.props.curTime ?
+                    {duration && curTime < duration && curTime >= 0 ?
                         this.props.satPositions.map(item =>
                             <Line
                                 key={item.info.satid}
-                                coordinates={item.trace.slice(Math.max(this.props.curTime - 1200, 0), this.props.curTime)}
+                                coordinates={item.trace.slice(Math.max(curTime - 1200, 0), curTime)}
                                 stroke={item.color}
                                 strokeWidth={2}
                             />

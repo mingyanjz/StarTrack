@@ -38,6 +38,7 @@ class SatList extends Component {
                 <div className="set-duration">
                             <label>Track Duration (mins): </label>
                             <InputNumber
+                                disabled={satList.length===0}
                                 placeholder="duration"
                                 max={90}  
                                 min={5}

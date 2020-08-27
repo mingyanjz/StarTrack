@@ -15,7 +15,7 @@ class Main extends Component {
             tracking: false,
             selected: [],
             satPositions: [],
-            curTime: 0,
+            curTime: -1,
         }
     }
 
@@ -40,7 +40,8 @@ class Main extends Component {
     searchSatellites = (setting) => {
         this.setState({
             selected: [],
-            // satPositions: [],
+            satPositions: [],
+            curTime: -1,
         })
         const { observerLat, observerLon, observerAlt, observerRadius } = setting;
         const url = `${NEARBY_SATELLITE}/${observerLat}/${observerLon}/${observerAlt}/${observerRadius}/${STARLINK_CATEGORY}/&apiKey=${SAT_API_KEY}`;
@@ -51,7 +52,7 @@ class Main extends Component {
         Axios.get(url)
             .then(res => {
                 // console.log(res);
-                res = res.data.above.filter(entry => entry.satid != 45211);
+                res = res.data.above.filter(entry => entry.satid !== 45211);
                 this.setState({
                     satInfo: res,
                     loading: false,
@@ -67,9 +68,10 @@ class Main extends Component {
     }
 
     trackSatellites = (duration) => {
-        // this.setState({
-        //     satPositions: [],
-        // });
+        this.setState({
+            satPositions: [],
+            curTime: -1,
+        });
         const { observerLat, observerLon, observerAlt } = this.state.setting;
         const seconds = duration * 60;
         this.setState({
@@ -94,7 +96,7 @@ class Main extends Component {
                     satPositions: res,
                     tracking: true,
                 });
-                this.track();
+                this.track(0);
             })
             .catch(error => {
             this.setState({
@@ -105,17 +107,19 @@ class Main extends Component {
         
     }
 
-    track = () => {
+    track = (start) => {
         const timestep = 6;
-        const startTime = 0;
+        const totalTime = this.state.satPositions[0].positions.length;
+        start = Math.max(0, start);
+        const startTime = start % totalTime;
         this.setState({
-            curTime: 0,
+            curTime: start,
         });
         let curTime = startTime ;
-        const totalTime = this.state.satPositions[0].positions.length;
+        
         let realTime = new Date();
         let timer = setInterval( () => {
-            if (curTime >= totalTime) {
+            if (curTime > totalTime || !this.state.tracking) {
                 this.setState({
                     tracking: false,
                 });
@@ -133,6 +137,29 @@ class Main extends Component {
         console.log("finished");
     }
 
+    pauseTracking = () => {
+        this.setState({
+            tracking: false,
+        });
+    }
+    continueTracking = () => {
+        this.setState({
+            tracking: true,
+        });
+        if (this.state.curTime >= this.state.satPositions[0].positions.length) {
+            this.track(0);
+        } else {
+            this.track(this.state.curTime);
+        }
+        
+    }
+    changeCurTime = (curTime) => {
+        // console.log(curTime);
+        this.setState({
+            tracking: false,
+            curTime: curTime, 
+        });
+    }
     render() {
         return (
             <div className="main">
@@ -161,6 +188,9 @@ class Main extends Component {
                         curTime={this.state.curTime}
                         realTime={this.state.realTime}
                         setting={this.state.setting}
+                        pauseTracking={this.pauseTracking}
+                        continueTracking={this.continueTracking}
+                        changeCurTime={this.changeCurTime}
                     />
                 </div>
             </div>
