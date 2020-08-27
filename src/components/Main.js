@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import SatSetting from './SatSetting'
 import SatList from './SatList'
 import WorldMap from './WorldMap'
+import Colors from '../constant/colors'
 import { NEARBY_SATELLITE, STARLINK_CATEGORY, TRACK_SATELLITE } from '../constant/constant';
 import {SAT_API_KEY} from '../private/key'
 import Axios from 'axios';
@@ -11,11 +12,13 @@ class Main extends Component {
         this.state = {
             loading: false,
             loadTracking: false,
+            tracking: false,
             selected: [],
             satPositions: [],
             curTime: 0,
         }
     }
+
     updateSelected = (item, status) => {
         let {selected: list} = this.state;
         const found = list.some(entry => entry.satid === item.satid);
@@ -28,12 +31,16 @@ class Main extends Component {
         this.setState({
             selected: list,
         });
-        // console.log(list);
     }
+
     onShowSatellites = (setting) => {
         this.searchSatellites(setting);
     }
+
     searchSatellites = (setting) => {
+        this.setState({
+            selected: [],
+        })
         const { observerLat, observerLon, observerAlt, observerRadius } = setting;
         const url = `${NEARBY_SATELLITE}/${observerLat}/${observerLon}/${observerAlt}/${observerRadius}/${STARLINK_CATEGORY}/&apiKey=${SAT_API_KEY}`;
         console.log('sending request');
@@ -42,6 +49,7 @@ class Main extends Component {
         });
         Axios.get(url)
             .then(res => {
+                console.log(res);
                 this.setState({
                     satInfo: res.data,
                     loading: false,
@@ -55,6 +63,7 @@ class Main extends Component {
                 console.log('err in fetch satellite -> ', error);
             })
     }
+
     trackSatellites = (duration) => {
         const { observerLat, observerLon, observerAlt } = this.state.setting;
         const seconds = duration * 60;
@@ -66,17 +75,20 @@ class Main extends Component {
             const url = `${TRACK_SATELLITE}/${satid}/${observerLat}/${observerLon}/${observerAlt}/${seconds}/&apiKey=${SAT_API_KEY}`;
             return Axios.get(url);
         })
-        
+        console.log(responses);
         Axios.all(responses)
             .then(Axios.spread((...args) => {
                 return args.map(item => item.data)
             })).then(res => {
+                let colorId = 0;
                 res.map(entry => {
-                    entry.trace = entry.positions.map(({satlatitude, satlongitude}) => [satlongitude, satlatitude])
+                    entry.trace = entry.positions.map(({satlatitude, satlongitude}) => [satlongitude, satlatitude]);
+                    entry.color = Object.values(Colors)[colorId++];
                 });
                 this.setState({
                     loadTracking: false,
                     satPositions: res,
+                    tracking: true,
                 });
                 this.track();
             })
@@ -88,8 +100,8 @@ class Main extends Component {
         })
         
     }
+
     track = () => {
-        // console.log(this.state.satPositions);
         const timestep = 6;
         const startTime = 0;
         this.setState({
@@ -97,17 +109,24 @@ class Main extends Component {
         });
         let curTime = startTime ;
         const totalTime = this.state.satPositions[0].positions.length;
-        
+        let realTime = new Date();
         let timer = setInterval( () => {
             if (curTime >= totalTime) {
+                this.setState({
+                    tracking: false,
+                });
+                clearInterval(timer);
                 return;
             }  
+            
             this.setState({
                 curTime: curTime,
+                realTime: realTime,
             });
+            realTime.setSeconds(realTime.getSeconds() + timestep);
             curTime += timestep;
         }, 100)
-       
+        console.log("finished");
     }
     render() {
         return (
@@ -119,6 +138,8 @@ class Main extends Component {
                     <SatList 
                         satInfo={this.state.satInfo}
                         loading={this.state.loading}
+                        loadTracking={this.state.loadTracking}
+                        tracking={this.state.tracking}
                         selected={this.state.selected}
                         updateSelected={this.updateSelected}
                         trackSatellites={this.trackSatellites}
@@ -130,6 +151,7 @@ class Main extends Component {
                         loading={this.state.loadTracking}
                         satPositions={this.state.satPositions}
                         curTime={this.state.curTime}
+                        realTime={this.state.realTime}
                     />
                 </div>
             </div>

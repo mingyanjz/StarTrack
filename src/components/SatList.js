@@ -7,7 +7,7 @@ class SatList extends Component {
     constructor(){
         super();
         this.state = {
-            duration: 0,
+            duration: 30,
         }
     }
     onChangeDuration = value => {
@@ -30,18 +30,18 @@ class SatList extends Component {
                 <Button
                     className="start-tracking-btn"
                     size="large"
-                    disabled={this.props.selected.length===0}
+                    disabled={this.props.selected.length===0 || this.props.selected.length>20 || this.props.loadTracking || this.props.tracking}
                     onClick={() => this.props.trackSatellites(this.state.duration)}
                 >
                     Start tracking on map
                 </Button>
                 <div className="set-duration">
-                            <label>Track Duration (min): </label>
+                            <label>Track Duration (mins): </label>
                             <InputNumber
                                 placeholder="duration"
                                 max={90}  
-                                min={0}
-                                defaultValue={0}
+                                min={5}
+                                defaultValue={30}
                                 style={{margin: "0 2px"}}
                                 onChange={this.onChangeDuration}
                             />

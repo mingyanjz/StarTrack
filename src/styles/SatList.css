@@ -3,7 +3,7 @@
     padding-top: 10px;
     margin-top: 10px;
     border: 2px solid #ccc;
-    height: 450px;
+    height: 495px;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -14,6 +14,11 @@
     font-size: 1em;
     color: #fff;
     padding: 10px 36px;
+    margin-bottom: 10px;
+}
+.set-duration{
+    font-size: 1em;
+    margin-bottom: 10px;
 }
 .sat-list{
     overflow: scroll;

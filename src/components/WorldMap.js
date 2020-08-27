@@ -12,9 +12,11 @@ class WorldMap extends Component {
 
     render() {
         return (
-            <div>
+            <div className="map-box">
                 <ComposableMap
                     className="map"
+                    // width={960}
+                    // height={600}
                     width={960}
                     height={600}
                     projectionConfig={{ scale: 147 }
@@ -28,9 +30,9 @@ class WorldMap extends Component {
                     {
                         this.props.satPositions.map(item =>
                             <Marker key={item.info.satid} coordinates={item.trace[this.props.curTime]}>
-                                <circle r={8} fill="#F53" />
+                                <circle r={4} fill={item.color} />
                                 <text textAnchor="middle" fill="#F53" y={20}>
-                                    {item.info.satname.slice(-4)}
+                                    {item.info.satname.match(/\d+/g).join('')}
                                 </text>
                             </Marker>
                         )
@@ -39,8 +41,9 @@ class WorldMap extends Component {
                     {
                         this.props.satPositions.map(item =>
                             <Line
-                                coordinates={item.trace.slice(0,this.props.curTime)}
-                                stroke="#F53"
+                                key={item.info.satid}
+                                coordinates={item.trace.slice(Math.max(this.props.curTime - 1200, 0), this.props.curTime)}
+                                stroke={item.color}
                                 strokeWidth={2}
                             />
                         )
@@ -51,6 +54,13 @@ class WorldMap extends Component {
                     this.props.loading ?
                         <Spin tip="Loading satellites information..." /> : <></>
                 }
+                {
+                    this.props.realTime ?
+                        <div className="map-time"> 
+                            {this.props.realTime.toString()}
+                        </div> : <></>
+                }
+
             </div>
         )
     }

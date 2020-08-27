@@ -16,29 +16,29 @@ class SatSetting extends Component {
         this.setState({
             observerLon: value
         })
-        console.log('Longitude value ', value);
+        // console.log('Longitude value ', value);
     }
     onChangeLat = (value) => {       
         this.setState({
             observerLat: value
         })
-        console.log('Latitude value ', value);
+        // console.log('Latitude value ', value);
     }
     onChangeAlt = (value) => {    
         this.setState({
             observerAlt: value
         })
-        console.log('Altitude value', value);
+        // console.log('Altitude value', value);
     }
     onChangeRadius = (value) => {    
         this.setState({
             observerRadius: value
         })
-        console.log('Radius value', value);
+        // console.log('Radius value', value);
     }
     showSatellites = () => {
         this.props.onShowSatellites(this.state);
-        console.log('Config ', this.state);
+        // console.log('Config ', this.state);
     }
     render() {
         return (

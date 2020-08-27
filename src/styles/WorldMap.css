@@ -1,0 +1,12 @@
+.map-box{
+    position: relative;
+    height: inherit;
+    width: inherit;
+    bottom: 50px;
+}
+.map-time{
+    position: relative;
+    font-size: 16px;
+    font-weight: bold;
+    bottom: 150px;
+}
