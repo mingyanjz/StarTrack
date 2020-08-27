@@ -23,7 +23,7 @@ class SatList extends Component {
     }
 
     render() {
-        const satList = this.props.satInfo ? this.props.satInfo.above : [];
+        const satList = this.props.satInfo ? this.props.satInfo : [];
         // console.log(this.props.satInfo);
         return (
             <div className="satellite-box">

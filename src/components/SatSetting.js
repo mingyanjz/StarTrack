@@ -94,6 +94,7 @@ class SatSetting extends Component {
                     </div>
                     <div className="search-satellites">
                         <Button
+                            disabled={ this.props.loadTracking || this.props.tracking}
                             className="search-satellites-btn"
                             // type="primary"
                             size="large"

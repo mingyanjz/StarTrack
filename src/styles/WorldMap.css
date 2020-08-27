@@ -2,11 +2,57 @@
     position: relative;
     height: inherit;
     width: inherit;
+    /* top: 350px; */
     bottom: 50px;
+    margin-bottom: 10px;
 }
 .map-time{
     position: relative;
     font-size: 16px;
     font-weight: bold;
-    bottom: 150px;
+    align-items: center;
+    bottom: 50px;
+}
+.map-slider{
+    position: absolute;
+    top: 100px;
+    left: 40px;
+    z-index: 100;
+    margin: auto;
+   
+    width: 450px;
+}
+.slider-label{
+    font-size: 1em;
+    font-weight: bold;
+}
+.map{
+    position: relative;
+    top: 50px;
+}
+.spinner-loading{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 600px;
+    width: 960px;
+}
+.spinner-tracking{
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    height: 600px;
+    width: 960px;
 }

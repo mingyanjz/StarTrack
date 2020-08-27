@@ -1,22 +1,37 @@
 import React, { Component } from 'react';
 import { ComposableMap, Geographies, Geography, Graticule, Marker, Line } from "react-simple-maps";
 import { GEO_URL } from "../constant/constant";
-import { Spin } from 'antd';
+import { Spin, Slider } from 'antd';
 class WorldMap extends Component {
     constructor() {
         super();
         this.state = {
-            map: null
+           
         }
     }
 
     render() {
+        let duration = this.props.satPositions.length != 0 ? this.props.satPositions[0].positions.length/60 : 0;
         return (
             <div className="map-box">
+                {/* {this.props.satPositions.length!=0 ?
+                    <div className="map-slider">
+                        <label className="slider-label">Tracking duration (mins)</label>
+                        <Slider
+                            marks={{
+                                0: '0',
+                                [duration]: duration,
+                            }}
+                            step={0.1}
+                            min={0}
+                            max={duration}
+                            value={this.props.curTime ? this.props.curTime/60 : 0} />
+                    </div> : <></>
+                } */}
+
+
                 <ComposableMap
                     className="map"
-                    // width={960}
-                    // height={600}
                     width={960}
                     height={600}
                     projectionConfig={{ scale: 147 }
@@ -28,6 +43,25 @@ class WorldMap extends Component {
                         }
                     </Geographies>
                     {
+                        this.props.setting ?
+                            <Marker coordinates={[this.props.setting.observerLon, this.props.setting.observerLat]}>
+                                <g
+                                    fill="none"
+                                    stroke="#FF5533"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    transform="translate(-12, -24)"
+                                >
+                                    <circle cx="12" cy="10" r="3" />
+                                    <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
+                                </g>
+                                <text textAnchor="middle" fill="#F53" y={20}>
+                                    Observer
+                                </text>
+                            </Marker> : <></>
+                    }
+                    {this.props.curTime ?
                         this.props.satPositions.map(item =>
                             <Marker key={item.info.satid} coordinates={item.trace[this.props.curTime]}>
                                 <circle r={4} fill={item.color} />
@@ -35,10 +69,10 @@ class WorldMap extends Component {
                                     {item.info.satname.match(/\d+/g).join('')}
                                 </text>
                             </Marker>
-                        )
+                        ) : <></>
 
                     }
-                    {
+                    {this.props.curTime ?
                         this.props.satPositions.map(item =>
                             <Line
                                 key={item.info.satid}
@@ -46,17 +80,21 @@ class WorldMap extends Component {
                                 stroke={item.color}
                                 strokeWidth={2}
                             />
-                        )
+                        ) : <></>
 
                     }
                 </ComposableMap>
                 {
+                    this.props.tracking ?
+                        <Spin className="spinner-tracking" tip="Tracking satellites..." /> : <></>
+                }
+                {
                     this.props.loading ?
-                        <Spin tip="Loading satellites information..." /> : <></>
+                        <Spin className="spinner-loading" tip="Loading satellites information..." /> : <></>
                 }
                 {
                     this.props.realTime ?
-                        <div className="map-time"> 
+                        <div className="map-time">
                             {this.props.realTime.toString()}
                         </div> : <></>
                 }

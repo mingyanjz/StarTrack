@@ -3,6 +3,7 @@
     padding-left: 20px;
 }
 .App-header {
+    background-color: rgb(188, 253, 253);
     display: flex;
     flex-direction: row;
     height: 70px;

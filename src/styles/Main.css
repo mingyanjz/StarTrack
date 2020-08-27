@@ -3,17 +3,19 @@
     height: 780px;
 }
 .left-part{   
+    /* background-color: brown; */
     position: absolute;
     left: 0px;
     top: 0px;
     padding: 20px;
-    height: 760px;
+    height: 780px;
     width: 400px;
-   
 }
 .right-part{
-    margin-left: 380px;
+    /* background-color: blue; */
+    position: absolute;
+    margin-left: 400px;
     margin-bottom: 50px;
     height: 780px;
-    width: 1400px;
+    width: 1200px;
 }
