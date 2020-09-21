@@ -104,7 +104,7 @@ class Main extends Component {
             }); 
             console.log('err in fetch satellite -> ', error);
         })
-        
+        console.log("get orbits finished");
     }
 
     track = (start) => {
